@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tic-Tac-Toe Game</title>
-  <style>
-    *{
+    <style>
+*{
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
@@ -14,7 +14,6 @@
 body{
     background-color: #e8f07a50;
     text-align: center;
-    
 }
 header{
     background-color: black;
@@ -80,12 +79,12 @@ header{
 #msg{
     color: white;
     font-weight: 600;
-    font-size: 11vmin;
+    font-size: 6vmin;
 }
 .hide{
     display: none;
 }
-  </style>
+</style>
   </head>
   <body>
     <header>
@@ -108,22 +107,18 @@ header{
           <button class="one"></button>
         </div>
       </div>
-      <button id="newgame">New Game</button>
+      <button id="newgame">New  Game</button>
       <button id="Reset">Reset Game</button>
     </main>
 
     <script>
-     let box = document.querySelectorAll(".one");
+let box = document.querySelectorAll(".one");
 let Reset = document.querySelector("#Reset");
 let newbtn = document.querySelector("#newgame");
 let msg = document.querySelector(".msg");
 let message = document.querySelector("#msg");
-let btn=document.querySelector("#btn");
-let mode="light";
-let body= document.querySelector("body");
 let username = prompt("Enter your Name:");
 let terno = true;
-let gameOver = false;
 const winpattern = [
   [0, 1, 2],
   [3, 4, 5],
@@ -134,96 +129,100 @@ const winpattern = [
   [0, 4, 8],
   [2, 4, 6],
 ];
+
 const Resetgame = () => {
   terno = true;
-  gameOver = false;
   enableboxes();
   msg.classList.add("hide");
 };
+
 const showDraw = () => {
-  msg.innerText = "It's a Draw!";
+  message.innerText = "It's a Draw!";
   msg.classList.remove("hide");
   disableboxes();
-  gameOver = true;
 };
 
-box.forEach((one) => {
-  one.addEventListener("click", () => {
-    if (terno) {
-      one.innerText = "O";
-      terno = false;
-    } else {
-      one.innerText = "X";
-      terno = true;
-    }
-    one.disabled = "true";
-    cheaker();
-  });
-});
 const disableboxes = () => {
   for (let boxes of box) {
     boxes.disabled = "true";
   }
 };
+
 const enableboxes = () => {
   for (let boxes of box) {
     boxes.disabled = false;
     boxes.innerText = "";
   }
 };
+
 const showwinner = (winner) => {
-  msg.innerText = `Congratulations,Winner is ${winner}.`;
+    pos1=username;
+  message.innerText = `Congratulations, Winner is ${winner}.`;
   msg.classList.remove("hide");
   disableboxes();
-  gameOver = true;
 };
+
 const cheaker = () => {
-    let winnerFound = false;
-  
-    for (let pattern of winpattern) {
-      let pos1 = box[pattern[0]].innerText;
-      let pos2 = box[pattern[1]].innerText;
-      let pos3 = box[pattern[2]].innerText;
-  
-      if (pos1 !== "" && pos2 !== "" && pos3 !== "") {
-        if (pos1 === pos2 && pos2 === pos3) {
-          showwinner(username);
-          winnerFound = true;
-          break;
-        }
+  let winnerFound = false;
+
+  for (let pattern of winpattern) {
+    let pos1 = box[pattern[0]].innerText;
+    let pos2 = box[pattern[1]].innerText;
+    let pos3 = box[pattern[2]].innerText;
+
+    if (pos1 !== "" && pos2 !== "" && pos3 !== "") {
+      if (pos1 === pos2 && pos2 === pos3) {
+        showwinner(pos1=username);
+        winnerFound = true;
+        return;
       }
     }
-  
-    if (!winnerFound) {
-      let isDraw = true;
-      box.forEach((one) => {
-        if (one.innerText === "") {
-          isDraw = false;
-        }
-      });
-  
-      if (isDraw) {
-        showDraw();
-      }
+  }
+
+  let isDraw = true;
+  box.forEach((one) => {
+    if (one.innerText === "") {
+      isDraw = false;
     }
-  };
-  
-box.forEach((one) => {
-    one.addEventListener("click", () => {
-      if (gameOver || one.disabled) return; 
-
-      if (terno) {
-        one.innerText = "O";
-        terno = false;
-      } else {
-        one.innerText = "X";
-        terno = true;
-      }
-
-      one.disabled = true;
-      cheaker();
-    });
   });
+
+  if (!winnerFound && isDraw) {
+    showDraw();
+  }
+};
+
+const botMove = () => {
+  let emptyBoxes = [];
+  box.forEach((one, index) => {
+    if (one.innerText === "") {
+      emptyBoxes.push(index);
+    }
+  });
+
+  if (emptyBoxes.length > 0) {
+    let randomIndex = emptyBoxes[Math.floor(Math.random() * emptyBoxes.length)];
+    box[randomIndex].innerText = "X";
+    box[randomIndex].disabled = true;
+    cheaker();
+    terno = true;
+  }
+};
+
+box.forEach((one) => {
+  one.addEventListener("click", () => {
+    if (one.disabled) return;
+
+    one.innerText = "O";
+    one.disabled = true;
+    cheaker();
+    terno = false;
+
+    if (!msg.classList.contains("hide")) return;
+
+    setTimeout(botMove, 500); // Bot waits 500ms before moving
+  });
+});
+
 newbtn.addEventListener("click", Resetgame);
 Reset.addEventListener("click", Resetgame);
     </script>
